@@ -26,11 +26,11 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-500">នាម <span class="text-danger">*</span></label>
+                            <label class="form-label fw-500">នាមត្រកូល <span class="text-danger">*</span></label>
                             <input type="text" name="first_name" value="{{ old('first_name',$student->first_name) }}" class="form-control rounded-3 @error('first_name') is-invalid @enderror">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-500">ឈ្មោះ <span class="text-danger">*</span></label>
+                            <label class="form-label fw-500">នាមខ្លួន <span class="text-danger">*</span></label>
                             <input type="text" name="last_name" value="{{ old('last_name',$student->last_name) }}" class="form-control rounded-3 @error('last_name') is-invalid @enderror">
                         </div>
                         <div class="col-md-6">
