@@ -74,7 +74,7 @@
                     </div>
                     <label class="btn btn-outline-primary rounded-3 btn-sm" for="photoInput"><i data-lucide="upload" class="lucide-sm me-1"></i>ជ្រើសរូបថត</label>
                     <input type="file" name="photo" id="photoInput" class="d-none" accept="image/*" onchange="previewPhoto(this)">
-                    <div class="text-muted mt-2" style="font-size:.75rem;">JPG, PNG, WEBP — អតិបរមា 2MB</div>
+                    <div class="text-muted mt-2" style="font-size:.75rem;">JPG, PNG, WEBP — អតិបរមាចំនួន 2MB</div>
                     @error('photo')<div class="text-danger mt-1" style="font-size:.8rem;">{{ $message }}</div>@enderror
                 </div>
             </div>
