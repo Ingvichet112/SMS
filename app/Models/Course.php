@@ -17,4 +17,9 @@ class Course extends Model
         'description',
         'credit',
     ];
+
+    public function marks()
+    {
+        return $this->hasMany(Mark::class);
+    }
 }

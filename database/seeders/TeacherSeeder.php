@@ -10,8 +10,25 @@ class TeacherSeeder extends Seeder
 {
     public function run(): void
     {
-        // បង្កើតគ្រូ ១០ នាក់ ដោយប្រើ Factory
-        Teacher::factory()->count(10)->create();
-        $this->command->info('✅ 10 teachers seeded.');
+        // ស្វែងរក Teacher User
+        $teacherUser = \App\Models\User::where('email', 'teacher@sms.com')->first();
+
+        if ($teacherUser) {
+            // បង្កើតគ្រូជាក់លាក់សម្រាប់ User នេះ
+            Teacher::create([
+                'user_id'    => $teacherUser->id,
+                'teacher_id' => 'TCH-000',
+                'name'       => 'Dr. John Doe',
+                'gender'     => 'Male',
+                'email'      => 'teacher@sms.com',
+                'phone'      => '012345678',
+                'subject'    => 'Computer Science',
+                'address'    => 'Phnom Penh, Cambodia',
+            ]);
+        }
+
+        // បង្កើតគ្រូ ៩ នាក់ទៀត ដោយប្រើ Factory
+        Teacher::factory()->count(9)->create();
+        $this->command->info('✅ 10 teachers seeded (1 linked to teacher@sms.com).');
     }
 }

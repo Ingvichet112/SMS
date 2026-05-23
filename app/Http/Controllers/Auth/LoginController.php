@@ -15,6 +15,9 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
+
+
+
     // ដំណើរការ Login
     public function login(Request $request)
     {
@@ -27,6 +30,17 @@ class LoginController extends Controller
         // ព្យាយាម Login
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+            
+            $user = Auth::user();
+            if ($user->role === 'student') {
+                return redirect()->intended('/student/dashboard')
+                    ->with('success', 'ចូលប្រព័ន្ធបានជោគជ័យ ក្នុងនាមជាសិស្ស!');
+            }
+            if ($user->role === 'teacher') {
+                return redirect()->intended('/teacher/dashboard')
+                    ->with('success', 'ចូលប្រព័ន្ធបានជោគជ័យ ក្នុងនាមជាគ្រូបង្រៀន!');
+            }
+
             return redirect()->intended('/dashboard')
                 ->with('success', 'ចូលប្រព័ន្ធបានជោគជ័យ!');
         }

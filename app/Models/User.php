@@ -16,7 +16,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // admin ឬ staff
+        'role', // admin, staff, ឬ student
     ];
 
     // ជួរដែលត្រូវលាក់
@@ -38,5 +38,29 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    // ពិនិត្យថាតើ User ជា Student ឬអត់
+    public function isStudent(): bool
+    {
+        return $this->role === 'student';
+    }
+
+    // ពិនិត្យថាតើ User ជា Teacher ឬអត់
+    public function isTeacher(): bool
+    {
+        return $this->role === 'teacher';
+    }
+
+    // ទំនាក់ទំនងទៅ Student
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    // ទំនាក់ទំនងទៅ Teacher
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
     }
 }

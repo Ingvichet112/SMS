@@ -15,9 +15,13 @@
     <div class="col-lg-4">
         <div class="card text-center">
             <div class="card-body p-4">
-                <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:2rem;margin:0 auto 1rem;">
-                    {{ strtoupper(substr($teacher->name,0,1)) }}
-                </div>
+                @if(!empty($teacher->photo))
+                    <img src="{{ asset($teacher->photo) }}" alt="Teacher Profile" style="width:80px;height:80px;border-radius:20px;object-fit:cover;box-shadow: 0 4px 12px rgba(0,0,0,0.08);margin-bottom:1rem;">
+                @else
+                    <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:2rem;margin:0 auto 1rem;">
+                        {{ strtoupper(substr($teacher->name,0,1)) }}
+                    </div>
+                @endif
                 <h5 class="fw-700 mb-1">{{ $teacher->name }}</h5>
                 <code class="text-success d-block mb-2">{{ $teacher->teacher_id }}</code>
                 <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">{{ $teacher->subject }}</span>

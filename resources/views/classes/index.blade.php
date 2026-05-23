@@ -24,22 +24,31 @@
 <div class="row g-4">
     @forelse($classes as $class)
     <div class="col-md-6 col-xl-4">
-        <div class="card h-100" style="transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div class="card h-100" style="transition:transform .2s,box-shadow .2s; cursor:pointer;" onclick="window.location='{{ route('classes.show',$class) }}'" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             <div class="card-body p-4">
                 <div class="d-flex align-items-start justify-content-between mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;color:#fff;">
-                            <i data-lucide="building-2" style="width:22px;height:22px;stroke:#fff;"></i>
-                        </div>
+                        @if($class->teacher)
+                            @if(!empty($class->teacher->photo))
+                                <img src="{{ asset($class->teacher->photo) }}" alt="Teacher Profile" style="width:48px;height:48px;border-radius:14px;object-fit:cover;box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                            @else
+                                <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.15rem;box-shadow: 0 4px 12px rgba(16,185,129,0.2);">
+                                    {{ strtoupper(substr($class->teacher->name, 0, 1)) }}
+                                </div>
+                            @endif
+                        @else
+                            <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;color:#fff;">
+                                <i data-lucide="building-2" style="width:22px;height:22px;stroke:#fff;"></i>
+                            </div>
+                        @endif
                         <div>
                             <h6 class="fw-700 mb-0">{{ $class->class_name }}</h6>
                             @if($class->room_number)<small class="text-muted"><i data-lucide="map-pin" class="lucide-sm me-1"></i>Room {{ $class->room_number }}</small>@endif
                         </div>
                     </div>
-                    <div class="dropdown">
+                    <div class="dropdown" onclick="event.stopPropagation()">
                         <button class="btn btn-sm btn-outline-secondary rounded-3" data-bs-toggle="dropdown"><i data-lucide="more-vertical" class="lucide-sm"></i></button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('classes.show',$class) }}"><i data-lucide="eye" class="lucide-sm me-2"></i>មើល</a></li>
                             <li><a class="dropdown-item" href="{{ route('classes.edit',$class) }}"><i data-lucide="pencil" class="lucide-sm me-2"></i>កែប្រែ</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><button class="dropdown-item text-danger" onclick="confirmDelete('{{ route('classes.destroy',$class) }}','{{ $class->class_name }}')"><i data-lucide="trash-2" class="lucide-sm me-2"></i>លុប</button></li>

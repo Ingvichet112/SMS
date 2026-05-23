@@ -23,6 +23,18 @@ class UserSeeder extends Seeder
             ]
         );
 
+        // បង្កើត Teacher User
+        User::updateOrCreate(
+            ['email' => 'teacher@sms.com'],
+            [
+                'name'     => 'Teacher User',
+                'email'    => 'teacher@sms.com',
+                'password' => Hash::make('password'),
+                'role'     => 'teacher',
+            ]
+        );
+
         $this->command->info('✅ Admin created: admin@sms.com / password');
+        $this->command->info('✅ Teacher created: teacher@sms.com / password');
     }
 }

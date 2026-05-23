@@ -22,9 +22,12 @@ class StoreTeacherRequest extends FormRequest
             'name'       => ['required', 'string', 'max:100'],
             'gender'     => ['required', 'in:Male,Female,Other'],
             'email'      => ['required', 'email', "unique:teachers,email,{$teacherId}"],
+            'password'   => ['nullable', 'string', 'min:8'],
             'phone'      => ['nullable', 'string', 'max:20'],
-            'subject'    => ['required', 'string', 'max:100'],
+            'subjects'   => ['required', 'array', 'min:1'],
+            'subjects.*' => ['string', 'max:100'],
             'address'    => ['nullable', 'string', 'max:500'],
+            'photo'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
@@ -36,7 +39,7 @@ class StoreTeacherRequest extends FormRequest
             'name.required'       => 'សូមបញ្ចូលឈ្មោះគ្រូ។',
             'email.required'      => 'សូមបញ្ចូលអ៊ីមែល។',
             'email.unique'        => 'អ៊ីមែលនេះមានរួចហើយ។',
-            'subject.required'    => 'សូមបញ្ចូលមុខវិជ្ជា។',
+            'subjects.required'   => 'សូមជ្រើសរើសមុខវិជ្ជាយ៉ាងតិចមួយ។',
         ];
     }
 }

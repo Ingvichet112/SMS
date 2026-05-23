@@ -26,6 +26,9 @@ class DatabaseSeeder extends Seeder
         // ៥. បង្កើតសិស្ស (ចែកចូលថ្នាក់)
         $this->call(StudentSeeder::class);
 
+        // ៦. បង្កើតការបង់ប្រាក់
+        $this->call(PaymentSeeder::class);
+
         $this->command->info('✅ All data seeded successfully!');
     }
 }

@@ -49,6 +49,11 @@
                             <input type="email" name="email" value="{{ old('email',$student->email) }}" class="form-control rounded-3 @error('email') is-invalid @enderror">
                         </div>
                         <div class="col-md-6">
+                            <label class="form-label fw-500">ពាក្យសម្ងាត់ (ទុកទំនេរ ប្រសិនបើមិនផ្លាស់ប្ដូរ)</label>
+                            <input type="password" name="password" class="form-control rounded-3 @error('password') is-invalid @enderror" placeholder="••••••••">
+                            @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label fw-500">ទូរស័ព្ទ</label>
                             <input type="text" name="phone" value="{{ old('phone',$student->phone) }}" class="form-control rounded-3">
                         </div>

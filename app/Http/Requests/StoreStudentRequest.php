@@ -22,6 +22,7 @@ class StoreStudentRequest extends FormRequest
             'gender'        => ['required', 'in:Male,Female,Other'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'email'         => ['nullable', 'email', 'max:100', 'unique:students,email'],
+            'password'      => ['nullable', 'string', 'min:8'],
             'phone'         => ['nullable', 'string', 'max:20'],
             'address'       => ['nullable', 'string', 'max:500'],
             'class_id'      => ['nullable', 'exists:school_classes,id'],

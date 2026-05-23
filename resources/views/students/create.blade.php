@@ -54,6 +54,12 @@
                             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
+                            <label class="form-label fw-500">ពាក្យសម្ងាត់ (សម្រាប់ Login)</label>
+                            <input type="password" name="password" class="form-control rounded-3 @error('password') is-invalid @enderror" placeholder="••••••••">
+                            <div class="text-muted" style="font-size: .75rem;">ទុកទំនេរ ប្រសិនបើមិនចង់កំណត់ (Default: password123)</div>
+                            @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label fw-500">ទូរស័ព្ទ</label>
                             <input type="text" name="phone" value="{{ old('phone') }}" class="form-control rounded-3" placeholder="012 345 678">
                         </div>

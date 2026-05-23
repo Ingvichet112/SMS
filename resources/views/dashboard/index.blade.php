@@ -113,7 +113,7 @@
                 <i data-lucide="users" style="stroke:#3b82f6;width:26px;height:26px;"></i>
             </div>
             <div>
-                <div class="stat-label" style="color:#3b82f6;">Number of students</div>
+                <div class="stat-label" style="color:#3b82f6;">សិស្សសរុប</div>
                 <div class="stat-value" style="color:#1e3a5f;">{{ number_format($totalStudents) }}</div>
             </div>
         </div>
@@ -126,7 +126,7 @@
                 <i data-lucide="user-cog" style="stroke:#8b5cf6;width:26px;height:26px;"></i>
             </div>
             <div>
-                <div class="stat-label" style="color:#8b5cf6;">Number of Teachers</div>
+                <div class="stat-label" style="color:#8b5cf6;">គ្រូបង្រៀនសរុប</div>
                 <div class="stat-value" style="color:#3b0764;">{{ number_format($totalTeachers) }}</div>
             </div>
         </div>
@@ -139,7 +139,7 @@
                 <i data-lucide="book-open" style="stroke:#d946ef;width:26px;height:26px;"></i>
             </div>
             <div>
-                <div class="stat-label" style="color:#d946ef;">Total Courses</div>
+                <div class="stat-label" style="color:#d946ef;">មុខវិជ្ជាសរុប</div>
                 <div class="stat-value" style="color:#4a044e;">{{ number_format($totalCourses) }}</div>
             </div>
         </div>
@@ -152,7 +152,7 @@
                 <i data-lucide="building-2" style="stroke:#10b981;width:26px;height:26px;"></i>
             </div>
             <div>
-                <div class="stat-label" style="color:#10b981;">Total Classes</div>
+                <div class="stat-label" style="color:#10b981;">ថ្នាក់រៀនសរុប</div>
                 <div class="stat-value" style="color:#064e3b;">{{ number_format($totalClasses) }}</div>
             </div>
         </div>
@@ -170,14 +170,17 @@
             <div class="dash-card-header">
                 <span class="dash-card-title">Students</span>
                 <select class="filter-select" id="classFilter">
-                    <option>All Classes</option>
+                    <option value="all">All Classes</option>
+                    @foreach($classesList as $cls)
+                        <option value="{{ $cls->id }}">{{ $cls->class_name }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="chart-wrap text-center">
                 <div style="max-width:220px;margin:0 auto;position:relative;">
                     <canvas id="donutChart" height="220"></canvas>
                     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-                        <div style="font-size:1.75rem;font-weight:800;color:var(--bs-body-color);">{{ $totalStudents }}</div>
+                        <div id="donutTotalText" style="font-size:1.75rem;font-weight:800;color:var(--bs-body-color);">{{ $totalStudents }}</div>
                         <div style="font-size:.72rem;color:#94a3b8;font-weight:600;text-transform:uppercase;">Total</div>
                     </div>
                 </div>
@@ -185,11 +188,11 @@
                 <div class="d-flex justify-content-center gap-4 mt-3">
                     <div class="d-flex align-items-center gap-2" style="font-size:.82rem;">
                         <span class="legend-dot" style="background:#93c5fd;"></span>
-                        <span class="text-muted">Boys: <strong class="text-body">{{ $maleStudents }}</strong></span>
+                        <span class="text-muted">Boys: <strong class="text-body" id="donutBoysText">{{ $maleStudents }}</strong></span>
                     </div>
                     <div class="d-flex align-items-center gap-2" style="font-size:.82rem;">
                         <span class="legend-dot" style="background:#c4b5fd;"></span>
-                        <span class="text-muted">Girls: <strong class="text-body">{{ $femaleStudents }}</strong></span>
+                        <span class="text-muted">Girls: <strong class="text-body" id="donutGirlsText">{{ $femaleStudents }}</strong></span>
                     </div>
                 </div>
             </div>
@@ -248,34 +251,37 @@
 </div>
 
 {{-- -------------------------------------------------------
-     Bottom Row: Attendance Bar + Earnings Line Charts
+     Bottom Row: Earnings Bar + Enrollment Line Charts
 ------------------------------------------------------- --}}
 <div class="row g-3">
 
-    {{-- Attendance Bar Chart --}}
+    {{-- Earnings Bar Chart --}}
     <div class="col-lg-6">
         <div class="dash-card">
             <div class="dash-card-header">
                 <div>
-                    <div class="dash-card-title">Attendance</div>
+                    <div class="dash-card-title d-flex align-items-center gap-2">
+                        <i data-lucide="banknote" style="stroke:#3b82f6;width:18px;height:18px;vertical-align:middle;"></i>
+                        <span>Earnings Overview (ប្រាក់ចំណូលទទួលបាន)</span>
+                    </div>
                     <div class="d-flex gap-3 mt-1">
-                        <div class="d-flex align-items-center gap-1" style="font-size:.75rem;">
-                            <span class="legend-dot" style="background:#93c5fd;"></span>
-                            <span class="text-muted">Total Present</span>
+                        <div class="d-flex align-items-center gap-1.5" style="font-size:.78rem;">
+                            <span class="legend-dot" style="background:#bfe2f7;"></span>
+                            <span class="text-muted">Collected: <strong class="text-body">${{ number_format($totalEarnings) }}</strong></span>
                         </div>
-                        <div class="d-flex align-items-center gap-1" style="font-size:.75rem;">
-                            <span class="legend-dot" style="background:#c4b5fd;"></span>
-                            <span class="text-muted">Total Absent</span>
+                        <div class="d-flex align-items-center gap-1.5" style="font-size:.78rem;">
+                            <span class="legend-dot" style="background:#dcd0f7;"></span>
+                            <span class="text-muted">Pending: <strong class="text-body">${{ number_format($totalPending) }}</strong></span>
                         </div>
                     </div>
                 </div>
-                <select class="filter-select">
-                    <option>This week</option>
-                    <option>Last week</option>
+                <select class="filter-select" id="earningsPeriodSelect">
+                    <option value="this_week">This week</option>
+                    <option value="last_week">Last week</option>
                 </select>
             </div>
             <div class="chart-wrap" style="height:220px;">
-                <canvas id="attendanceChart"></canvas>
+                <canvas id="earningsChart"></canvas>
             </div>
         </div>
     </div>
@@ -323,8 +329,9 @@ const labelColor = () => isDark() ? '#94a3b8' : '#94a3b8';
 // -------------------------------------------------------
 // Donut Chart — ការបែងចែកភេទសិស្ស
 // -------------------------------------------------------
+const classStats = @json($classStats);
 const donutCtx = document.getElementById('donutChart').getContext('2d');
-new Chart(donutCtx, {
+const donutChart = new Chart(donutCtx, {
     type: 'doughnut',
     data: {
         labels: ['Boys', 'Girls'],
@@ -350,63 +357,131 @@ new Chart(donutCtx, {
     }
 });
 
+// Interactive filter dropdown for class-level student statistics
+document.getElementById('classFilter').addEventListener('change', function() {
+    const stats = classStats[this.value];
+    if (stats) {
+        // Update center total count text
+        document.getElementById('donutTotalText').innerText = stats.total;
+        // Update legend values
+        document.getElementById('donutBoysText').innerText = stats.male;
+        document.getElementById('donutGirlsText').innerText = stats.female;
+        // Update chart segments
+        donutChart.data.datasets[0].data = [stats.male, stats.female];
+        donutChart.update();
+    }
+});
+
 // -------------------------------------------------------
-// Attendance Bar Chart
+// Earnings Line/Area Chart (ប្រាក់ចំណូលទទួលបាន) — Ultra Modern
 // -------------------------------------------------------
-const attCtx = document.getElementById('attendanceChart').getContext('2d');
-new Chart(attCtx, {
+// -------------------------------------------------------
+// Earnings Bar Chart (Collected vs Pending) — Custom Double-Bar Style
+// -------------------------------------------------------
+const earningsCtx = document.getElementById('earningsChart').getContext('2d');
+
+const thisWeekCollected = @json($thisWeekCollected);
+const thisWeekPending = @json($thisWeekPending);
+const lastWeekCollected = @json($lastWeekCollected);
+const lastWeekPending = @json($lastWeekPending);
+
+const earningsChart = new Chart(earningsCtx, {
     type: 'bar',
     data: {
         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
         datasets: [
             {
-                label: 'Total Present',
-                data: [82, 75, 90, 68, 85],
-                backgroundColor: '#93c5fd',
+                label: 'Collected',
+                data: thisWeekCollected,
+                backgroundColor: '#bfe2f7', // Soft Sky Blue
                 borderRadius: 6,
-                borderSkipped: false,
+                borderSkipped: 'bottom',
+                barThickness: 12,
+                maxBarThickness: 12,
             },
             {
-                label: 'Total Absent',
-                data: [18, 25, 10, 32, 15],
-                backgroundColor: '#c4b5fd',
+                label: 'Pending',
+                data: thisWeekPending,
+                backgroundColor: '#dcd0f7', // Soft Purple
                 borderRadius: 6,
-                borderSkipped: false,
+                borderSkipped: 'bottom',
+                barThickness: 12,
+                maxBarThickness: 12,
             }
         ]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        barPercentage: 0.6,
+        categoryPercentage: 0.6,
         plugins: {
             legend: { display: false },
-            tooltip: { mode: 'index', intersect: false }
+            tooltip: {
+                backgroundColor: '#111111',
+                titleColor: '#ffffff',
+                bodyColor: '#ffffff',
+                titleFont: { size: 11, weight: 'bold' },
+                bodyFont: { size: 11 },
+                padding: { top: 6, right: 10, bottom: 6, left: 10 },
+                cornerRadius: 4,
+                displayColors: false,
+                caretSize: 4,
+                caretPadding: 4,
+                callbacks: {
+                    label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()} USD`
+                }
+            }
         },
         scales: {
             x: {
-                grid: { color: gridColor() },
+                grid: { display: false },
+                border: { display: false },
                 ticks: { color: labelColor(), font: { size: 11 } }
             },
             y: {
-                grid: { color: gridColor() },
-                ticks: { color: labelColor(), font: { size: 11 }, stepSize: 25, max: 100 },
+                grid: {
+                    color: gridColor(),
+                    borderDash: [4, 4],
+                    drawTicks: false
+                },
+                border: { display: false },
+                ticks: {
+                    color: labelColor(),
+                    font: { size: 11 },
+                    callback: value => '$' + value.toLocaleString()
+                },
                 beginAtZero: true,
             }
         }
     }
 });
 
+// interactive filter dropdown for weekly earnings
+document.getElementById('earningsPeriodSelect').addEventListener('change', function() {
+    const val = this.value;
+    if (val === 'this_week') {
+        earningsChart.data.datasets[0].data = thisWeekCollected;
+        earningsChart.data.datasets[1].data = thisWeekPending;
+    } else {
+        earningsChart.data.datasets[0].data = lastWeekCollected;
+        earningsChart.data.datasets[1].data = lastWeekPending;
+    }
+    earningsChart.update();
+});
+
 // -------------------------------------------------------
-// Enrollment Trend Area Chart
+// Enrollment Trend Area Chart — Ultra Modern
 // -------------------------------------------------------
 const enrollCtx = document.getElementById('enrollmentChart').getContext('2d');
+
 const gradStudents = enrollCtx.createLinearGradient(0, 0, 0, 200);
-gradStudents.addColorStop(0, 'rgba(147,197,253,.5)');
-gradStudents.addColorStop(1, 'rgba(147,197,253,.02)');
+gradStudents.addColorStop(0, 'rgba(59,130,246,0.25)');
+gradStudents.addColorStop(1, 'rgba(59,130,246,0.01)');
 
 const gradTeachers = enrollCtx.createLinearGradient(0, 0, 0, 200);
-gradTeachers.addColorStop(0, 'rgba(196,181,253,.4)');
-gradTeachers.addColorStop(1, 'rgba(196,181,253,.02)');
+gradTeachers.addColorStop(0, 'rgba(139,92,246,0.2)');
+gradTeachers.addColorStop(1, 'rgba(139,92,246,0.01)');
 
 new Chart(enrollCtx, {
     type: 'line',
@@ -416,22 +491,30 @@ new Chart(enrollCtx, {
             {
                 label: 'New Students',
                 data: [12, 19, 15, 28, 25, 32, 20, 18, 30, 22, 15, 27],
-                borderColor: '#93c5fd',
+                borderColor: '#3b82f6',
+                borderWidth: 3,
                 backgroundColor: gradStudents,
                 fill: true,
-                tension: .4,
-                pointRadius: 3,
-                pointBackgroundColor: '#3b82f6',
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: '#3b82f6',
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2,
             },
             {
                 label: 'New Teachers',
                 data: [3, 5, 2, 8, 4, 6, 3, 5, 7, 4, 2, 5],
-                borderColor: '#c4b5fd',
+                borderColor: '#8b5cf6',
+                borderWidth: 3,
                 backgroundColor: gradTeachers,
                 fill: true,
-                tension: .4,
-                pointRadius: 3,
-                pointBackgroundColor: '#8b5cf6',
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: '#8b5cf6',
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2,
             }
         ]
     },
@@ -440,15 +523,29 @@ new Chart(enrollCtx, {
         maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
-            tooltip: { mode: 'index', intersect: false }
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                titleFont: { size: 12, weight: 'bold' },
+                bodyFont: { size: 12 },
+                padding: 10,
+                cornerRadius: 8
+            }
         },
         scales: {
             x: {
-                grid: { color: gridColor() },
+                grid: { display: false },
+                border: { display: false },
                 ticks: { color: labelColor(), font: { size: 11 } }
             },
             y: {
-                grid: { color: gridColor() },
+                grid: {
+                    color: gridColor(),
+                    borderDash: [5, 5],
+                    drawTicks: false
+                },
+                border: { display: false },
                 ticks: { color: labelColor(), font: { size: 11 } },
                 beginAtZero: true,
             }

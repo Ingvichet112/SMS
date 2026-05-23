@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') — Student Management System</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/school-logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Khmer:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -144,95 +145,138 @@
         .page-content { animation: fadeIn .25s ease; }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-        /* Bookshelf Loader */
-        .page-loader {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--bs-body-bg, #ffffff);
-            z-index: 9999; display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+        /* ===== Bookshelf Page Loader ===== */
+        .bookshelf-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #6366f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity .6s ease, visibility .6s ease;
         }
-        .page-loader.hidden { opacity: 0; visibility: hidden; }
-        .bookshelf_wrapper { position: relative; top: -20px; width: 300px; margin: 0 auto; }
+        .bookshelf-loader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .bookshelf-loader .loader-text {
+            color: rgba(255,255,255,.7);
+            font-size: .85rem;
+            font-weight: 600;
+            letter-spacing: .05em;
+            margin-top: 40px;
+            animation: loaderPulse 1.5s ease infinite;
+        }
+        @keyframes loaderPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+        .bookshelf_wrapper { position: relative; }
         .books_list { margin: 0 auto; width: 300px; padding: 0; }
         .book_item {
-            position: absolute; top: -120px; box-sizing: border-box; list-style: none;
-            width: 40px; height: 120px; opacity: 0; background-color: var(--accent, #8b5cf6);
-            border: 5px solid white; transform-origin: bottom left;
-            transform: translateX(300px); animation: travel 2500ms linear infinite;
+            position: absolute;
+            top: -120px;
+            box-sizing: border-box;
+            list-style: none;
+            width: 40px;
+            height: 120px;
+            opacity: 0;
+            background-color: #6366f1;
+            border: 5px solid white;
+            transform-origin: bottom left;
+            transform: translateX(300px);
+            animation: travel 2500ms linear infinite;
         }
-        [data-bs-theme="dark"] .book_item { border-color: #0f172a; }
-        .book_item.first { top: -140px; height: 140px; }
-        .book_item.first:before, .book_item.first:after {
-            content: ''; position: absolute; top: 10px; left: 0; width: 100%; height: 5px; background-color: white;
+        .book_item.first  { top: -140px; height: 140px; }
+        .book_item.first::before,
+        .book_item.first::after {
+            content: ''; position: absolute; top: 10px; left: 0;
+            width: 100%; height: 5px; background-color: white;
         }
-        [data-bs-theme="dark"] .book_item.first:before, [data-bs-theme="dark"] .book_item.first:after { background-color: #0f172a; }
-        .book_item.first:after { top: initial; bottom: 10px; }
-        .book_item.second:before, .book_item.second:after, .book_item.fifth:before, .book_item.fifth:after {
-            box-sizing: border-box; content: ''; position: absolute; top: 10px; left: 0; width: 100%; height: 17.5px;
+        .book_item.first::after { top: initial; bottom: 10px; }
+
+        .book_item.second::before, .book_item.second::after,
+        .book_item.fifth::before, .book_item.fifth::after {
+            box-sizing: border-box; content: ''; position: absolute;
+            top: 10px; left: 0; width: 100%; height: 17.5px;
             border-top: 5px solid white; border-bottom: 5px solid white;
         }
-        [data-bs-theme="dark"] .book_item.second:before, [data-bs-theme="dark"] .book_item.second:after,
-        [data-bs-theme="dark"] .book_item.fifth:before, [data-bs-theme="dark"] .book_item.fifth:after { border-color: #0f172a; }
-        .book_item.second:after, .book_item.fifth:after { top: initial; bottom: 10px; }
-        .book_item.third:before, .book_item.third:after {
-            box-sizing: border-box; content: ''; position: absolute; top: 10px; left: 9px; width: 12px; height: 12px;
+        .book_item.second::after, .book_item.fifth::after { top: initial; bottom: 10px; }
+
+        .book_item.third::before, .book_item.third::after {
+            box-sizing: border-box; content: ''; position: absolute;
+            top: 10px; left: 9px; width: 12px; height: 12px;
             border-radius: 50%; border: 5px solid white;
         }
-        [data-bs-theme="dark"] .book_item.third:before, [data-bs-theme="dark"] .book_item.third:after { border-color: #0f172a; }
-        .book_item.third:after { top: initial; bottom: 10px; }
+        .book_item.third::after { top: initial; bottom: 10px; }
+
         .book_item.fourth { top: -130px; height: 130px; }
-        .book_item.fourth:before {
-            box-sizing: border-box; content: ''; position: absolute; top: 46px; left: 0; width: 100%; height: 17.5px;
+        .book_item.fourth::before {
+            box-sizing: border-box; content: ''; position: absolute;
+            top: 46px; left: 0; width: 100%; height: 17.5px;
             border-top: 5px solid white; border-bottom: 5px solid white;
         }
-        [data-bs-theme="dark"] .book_item.fourth:before { border-color: #0f172a; }
+
         .book_item.fifth { top: -100px; height: 100px; }
+
         .book_item.sixth { top: -140px; height: 140px; }
-        .book_item.sixth:before {
-            box-sizing: border-box; content: ''; position: absolute; bottom: 31px; left: 0px; width: 100%; height: 5px; background-color: white;
+        .book_item.sixth::before {
+            box-sizing: border-box; content: ''; position: absolute;
+            bottom: 31px; left: 0; width: 100%; height: 5px; background-color: white;
         }
-        [data-bs-theme="dark"] .book_item.sixth:before { background-color: #0f172a; }
-        .book_item.sixth:after {
-            box-sizing: border-box; content: ''; position: absolute; bottom: 10px; left: 9px; width: 12px; height: 12px;
+        .book_item.sixth::after {
+            box-sizing: border-box; content: ''; position: absolute;
+            bottom: 10px; left: 9px; width: 12px; height: 12px;
             border-radius: 50%; border: 5px solid white;
         }
-        [data-bs-theme="dark"] .book_item.sixth:after { border-color: #0f172a; }
+
         .book_item:nth-child(2) { animation-delay: 416ms; }
-        .book_item:nth-child(3) { animation-delay: 833ms; }
-        .book_item:nth-child(4) { animation-delay: 1250ms; }
-        .book_item:nth-child(5) { animation-delay: 1666ms; }
-        .book_item:nth-child(6) { animation-delay: 2083ms; }
-        .shelf { width: 300px; height: 5px; margin: 0 auto; background-color: white; position: absolute; }
-        [data-bs-theme="dark"] .shelf { background-color: #0f172a; }
-        .shelf:before, .shelf:after {
-            content: ''; position: absolute; width: 100%; height: 100%; background: var(--accent, #8b5cf6);
-            background-image: radial-gradient(rgba(255, 255, 255, 0.5) 30%, transparent 0); background-size: 10px 10px;
-            background-position: 0 -2.5px; top: 200%; left: 5%; animation: move 250ms linear infinite;
+        .book_item:nth-child(3) { animation-delay: 832ms; }
+        .book_item:nth-child(4) { animation-delay: 1248ms; }
+        .book_item:nth-child(5) { animation-delay: 1664ms; }
+        .book_item:nth-child(6) { animation-delay: 2080ms; }
+
+        .shelf {
+            width: 300px; height: 5px; margin: 0 auto;
+            background-color: white; position: relative;
         }
-        [data-bs-theme="dark"] .shelf:before, [data-bs-theme="dark"] .shelf:after { background-image: radial-gradient(rgba(255, 255, 255, 0.1) 30%, transparent 0); }
-        .shelf:after { top: 400%; left: 7.5%; }
-        @keyframes move { from { background-position-x: 0; } to { background-position-x: 10px; } }
+        .shelf::before, .shelf::after {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            background: #6366f1;
+            background-image: radial-gradient(rgba(255,255,255,.5) 30%, transparent 0);
+            background-size: 10px 10px;
+            background-position: 0 -2.5px;
+            top: 200%; left: 5%;
+            animation: shelfMove 250ms linear infinite;
+        }
+        .shelf::after { top: 400%; left: 7.5%; }
+
+        @keyframes shelfMove {
+            from { background-position-x: 0; }
+            to   { background-position-x: 10px; }
+        }
         @keyframes travel {
-            0% { opacity: 0; transform: translateX(300px) rotateZ(0deg) scaleY(1); }
-            6.5% { transform: translateX(279.5px) rotateZ(0deg) scaleY(1.1); }
-            8.8% { transform: translateX(273.6px) rotateZ(0deg) scaleY(1); }
-            10% { opacity: 1; transform: translateX(270px) rotateZ(0deg); }
+            0%    { opacity: 0; transform: translateX(300px) rotateZ(0deg) scaleY(1); }
+            6.5%  { transform: translateX(279.5px) rotateZ(0deg) scaleY(1.1); }
+            8.8%  { transform: translateX(273.6px) rotateZ(0deg) scaleY(1); }
+            10%   { opacity: 1; transform: translateX(270px) rotateZ(0deg); }
             17.6% { transform: translateX(247.2px) rotateZ(-30deg); }
-            45% { transform: translateX(165px) rotateZ(-30deg); }
+            45%   { transform: translateX(165px) rotateZ(-30deg); }
             49.5% { transform: translateX(151.5px) rotateZ(-45deg); }
             61.5% { transform: translateX(115.5px) rotateZ(-45deg); }
-            67% { transform: translateX(99px) rotateZ(-60deg); }
-            76% { transform: translateX(72px) rotateZ(-60deg); }
+            67%   { transform: translateX(99px) rotateZ(-60deg); }
+            76%   { transform: translateX(72px) rotateZ(-60deg); }
             83.5% { opacity: 1; transform: translateX(49.5px) rotateZ(-90deg); }
-            90% { opacity: 0; }
-            100% { opacity: 0; transform: translateX(0px) rotateZ(-90deg); }
+            90%   { opacity: 0; }
+            100%  { opacity: 0; transform: translateX(0px) rotateZ(-90deg); }
         }
     </style>
     @stack('styles')
 </head>
 <body>
-<!-- Bookshelf Loader -->
-<div id="page-loader" class="page-loader">
+@if(session('success'))
+<!-- Bookshelf Page Loader -->
+<div class="bookshelf-loader" id="pageLoader">
     <div class="bookshelf_wrapper">
         <ul class="books_list">
             <li class="book_item first"></li>
@@ -244,43 +288,92 @@
         </ul>
         <div class="shelf"></div>
     </div>
+    <div class="loader-text">Loading your dashboard...</div>
 </div>
+@endif
 
 <div id="sidebarOverlay"></div>
 
 <nav id="sidebar">
-    <a href="{{ route('dashboard') }}" class="sidebar-brand">
-        <div class="brand-icon"><i data-lucide="package" style="width:22px;height:22px;stroke:#fff;"></i></div>
-        <div>
-            <div class="brand-text">SMS System</div>
-        </div>
+    <a href="{{ auth()->check() ? (auth()->user()->role === 'student' ? route('student.dashboard') : (auth()->user()->role === 'teacher' ? route('teacher.dashboard') : route('dashboard'))) : route('guest') }}" class="sidebar-brand d-flex align-items-center gap-2.5" style="padding: 1.25rem 1.5rem;">
+        <img src="{{ asset('images/school-logo.png') }}" alt="School Logo" style="height: 38px; width: auto; border-radius: 6px; object-fit: contain;">
+        <div class="brand-text">SMS System</div>
     </a>
     <div class="sidebar-nav mt-1">
         <div class="nav-label">ទូទៅ</div>
-        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <i data-lucide="layout-dashboard"></i> Dashboard
-        </a>
-        <div class="nav-label mt-2">ការគ្រប់គ្រង</div>
-        <a href="{{ route('students.index') }}" class="nav-link {{ request()->routeIs('students.*') ? 'active' : '' }}">
-            <i data-lucide="users"></i> សិស្ស
-        </a>
-        <a href="{{ route('teachers.index') }}" class="nav-link {{ request()->routeIs('teachers.*') ? 'active' : '' }}">
-            <i data-lucide="user-cog"></i> គ្រូ
-        </a>
-        <a href="{{ route('courses.index') }}" class="nav-link {{ request()->routeIs('courses.*') ? 'active' : '' }}">
-            <i data-lucide="book-open"></i> មុខវិជ្ជា
-        </a>
-        <a href="{{ route('classes.index') }}" class="nav-link {{ request()->routeIs('classes.*') ? 'active' : '' }}">
-            <i data-lucide="building-2"></i> ថ្នាក់រៀន
-        </a>
+        @if(auth()->check())
+            @if(auth()->user()->role === 'student')
+                <a href="{{ route('student.dashboard') }}" class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+                    <i data-lucide="layout-dashboard"></i> ព័ត៌មានផ្ទាល់ខ្លួន
+                </a>
+                <a href="{{ route('student.class') }}" class="nav-link {{ request()->routeIs('student.class') ? 'active' : '' }}">
+                    <i data-lucide="building-2"></i> ថ្នាក់រៀនរបស់ខ្ញុំ
+                </a>
+                <a href="{{ route('student.subjects') }}" class="nav-link {{ request()->routeIs('student.subjects') ? 'active' : '' }}">
+                    <i data-lucide="book-open"></i> មុខវិជ្ជា
+                </a>
+                <a href="{{ route('student.exams') }}" class="nav-link {{ request()->routeIs('student.exams*') ? 'active' : '' }}">
+                    <i data-lucide="calendar-clock"></i> កាលវិភាគប្រឡង
+                </a>
+                <a href="{{ route('student.payments') }}" class="nav-link {{ request()->routeIs('student.payments*') ? 'active' : '' }}">
+                    <i data-lucide="banknote"></i> ការបង់ប្រាក់
+                </a>
+            @elseif(auth()->user()->role === 'teacher')
+                <a href="{{ route('teacher.dashboard') }}" class="nav-link {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                <a href="{{ route('teacher.attendance') }}" class="nav-link {{ request()->routeIs('teacher.attendance*') ? 'active' : '' }}">
+                    <i data-lucide="clipboard-check"></i> វត្តមាន
+                </a>
+                <a href="{{ route('teacher.scores') }}" class="nav-link {{ request()->routeIs('teacher.scores*') ? 'active' : '' }}">
+                    <i data-lucide="award"></i> ពិន្ទុ
+                </a>
+                <a href="{{ route('teacher.exams') }}" class="nav-link {{ request()->routeIs('teacher.exams*') ? 'active' : '' }}">
+                    <i data-lucide="calendar-clock"></i> កាលវិភាគប្រឡង
+                </a>
+            @else
+                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+            @endif
+        @else
+            <a href="{{ route('guest') }}" class="nav-link {{ request()->routeIs('guest') ? 'active' : '' }}">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+        @endif
+
+        @if(auth()->check() && !in_array(auth()->user()->role, ['student', 'teacher']))
+            <div class="nav-label mt-2">ការគ្រប់គ្រង</div>
+            <a href="{{ route('students.index') }}" class="nav-link {{ request()->routeIs('students.*') ? 'active' : '' }}">
+                <i data-lucide="users"></i> សិស្ស
+            </a>
+            <a href="{{ route('teachers.index') }}" class="nav-link {{ request()->routeIs('teachers.*') ? 'active' : '' }}">
+                <i data-lucide="user-cog"></i> គ្រូ
+            </a>
+            <a href="{{ route('courses.index') }}" class="nav-link {{ request()->routeIs('courses.*') ? 'active' : '' }}">
+                <i data-lucide="book-open"></i> មុខវិជ្ជា
+            </a>
+            <a href="{{ route('classes.index') }}" class="nav-link {{ request()->routeIs('classes.*') ? 'active' : '' }}">
+                <i data-lucide="building-2"></i> ថ្នាក់រៀន
+            </a>
+            <a href="{{ route('payments.index') }}" class="nav-link {{ request()->is('payments*') ? 'active' : '' }}">
+                <i data-lucide="banknote"></i> ការបង់ប្រាក់
+            </a>
+        @endif
     </div>
     <div class="sidebar-footer">
-        <form method="POST" action="{{ route('logout') }}" class="m-0">
-            @csrf
-            <button type="submit" class="logout-link">
-                <i data-lucide="log-out"></i> Log Out
-            </button>
-        </form>
+        @if(auth()->check())
+            <form method="POST" action="{{ route('logout') }}" class="m-0">
+                @csrf
+                <button type="submit" class="logout-link">
+                    <i data-lucide="log-out"></i> Log Out
+                </button>
+            </form>
+        @else
+            <a href="{{ route('login') }}" class="logout-link">
+                <i data-lucide="log-in"></i> Log In
+            </a>
+        @endif
     </div>
 </nav>
 
@@ -298,21 +391,33 @@
             <div class="dropdown">
                 <button class="btn btn-sm border dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
                     <span style="width:28px;height:28px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.75rem;">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        {{ auth()->check() ? strtoupper(substr(auth()->user()->name, 0, 1)) : 'G' }}
                     </span>
-                    <span class="d-none d-md-inline" style="font-size:.85rem;">{{ auth()->user()->name }}</span>
+                    <span class="d-none d-md-inline" style="font-size:.85rem;">{{ auth()->check() ? auth()->user()->name : 'Guest' }}</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><h6 class="dropdown-header">{{ auth()->user()->email }}</h6></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button class="dropdown-item text-danger" type="submit">
-                                <i data-lucide="log-out" class="lucide-sm me-2"></i>Logout
-                            </button>
-                        </form>
-                    </li>
+                    @if(auth()->check())
+                        <li><h6 class="dropdown-header">{{ auth()->user()->email }}</h6></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2 {{ request()->routeIs('password.change') ? 'active' : '' }}" href="{{ route('password.change') }}">
+                                <i data-lucide="key-round" class="lucide-sm text-primary"></i>
+                                <span>Change Password</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="dropdown-item text-danger d-flex align-items-center gap-2" type="submit">
+                                    <i data-lucide="log-out" class="lucide-sm"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
+                        </li>
+                    @else
+                        <li><a class="dropdown-item" href="{{ route('login') }}"><i data-lucide="log-in" class="lucide-sm me-2"></i>Login</a></li>
+                    @endif
                 </ul>
             </div>
         </div>
@@ -368,14 +473,14 @@ setTimeout(() => {
     document.querySelectorAll('.alert').forEach(el => bootstrap.Alert.getOrCreateInstance(el).close());
 }, 4000);
 
-// Hide Loader
-window.addEventListener('load', () => {
-    const loader = document.getElementById('page-loader');
-    if(loader) {
-        // Small delay to ensure the animation is visible briefly
-        setTimeout(() => { loader.classList.add('hidden'); }, 300);
-    }
-});
+// Bookshelf Loader — fade out after 2.5s
+const pageLoader = document.getElementById('pageLoader');
+if (pageLoader) {
+    setTimeout(() => {
+        pageLoader.classList.add('fade-out');
+        setTimeout(() => pageLoader.remove(), 700);
+    }, 2500);
+}
 </script>
 @stack('scripts')
 <script>

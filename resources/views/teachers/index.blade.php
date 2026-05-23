@@ -38,7 +38,11 @@
                         <td class="ps-4 text-muted" style="font-size:.82rem;">{{ $teachers->firstItem()+$i }}</td>
                         <td>
                             <div class="d-flex align-items-center gap-3">
-                                <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;">{{ strtoupper(substr($teacher->name,0,1)) }}</div>
+                                @if(!empty($teacher->photo))
+                                    <img src="{{ asset($teacher->photo) }}" alt="Teacher Profile" style="width:36px;height:36px;border-radius:10px;object-fit:cover;box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                                @else
+                                    <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;">{{ strtoupper(substr($teacher->name,0,1)) }}</div>
+                                @endif
                                 <div>
                                     <div class="fw-semibold" style="font-size:.9rem;">{{ $teacher->name }}</div>
                                     <div class="text-muted" style="font-size:.78rem;">{{ $teacher->email }}</div>

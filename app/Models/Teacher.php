@@ -13,6 +13,7 @@ class Teacher extends Model
 
     // ជួរដែលអនុញ្ញាតឱ្យកំណត់តម្លៃ
     protected $fillable = [
+        'user_id',
         'teacher_id',
         'name',
         'gender',
@@ -20,7 +21,14 @@ class Teacher extends Model
         'phone',
         'subject',
         'address',
+        'photo',
     ];
+
+    // ទំនាក់ទំនងទៅ User
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     // គ្រូ ១ ណែនាំថ្នាក់ច្រើន (One-to-Many)
     public function classes()

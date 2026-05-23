@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\User;
 use App\Models\SchoolClass;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Exports\StudentsExport;
-use Barryvdh\DomPDF\Facade\Pdf;
+
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 // Controller សម្រាប់ CRUD សិស្ស
 class StudentController extends Controller
@@ -59,6 +61,17 @@ class StudentController extends Controller
             $data['photo'] = 'uploads/students/' . $filename;
         }
 
+        // បង្កើត User account ប្រសិនបើមានអ៊ីមែល
+        if (!empty($data['email'])) {
+            $user = User::create([
+                'name'     => $data['first_name'] . ' ' . $data['last_name'],
+                'email'    => $data['email'],
+                'password' => Hash::make($data['password'] ?? 'password123'), // Default password if empty
+                'role'     => 'student',
+            ]);
+            $data['user_id'] = $user->id;
+        }
+
         // បង្កើតសិស្សថ្មី
         Student::create($data);
 
@@ -98,6 +111,30 @@ class StudentController extends Controller
             $data['photo'] = 'uploads/students/' . $filename;
         }
 
+        // ធ្វើបច្ចុប្បន្នភាព ឬបង្កើត User account
+        if (!empty($data['email'])) {
+            if ($student->user) {
+                // Update existing user
+                $updateData = [
+                    'name'  => $data['first_name'] . ' ' . $data['last_name'],
+                    'email' => $data['email'],
+                ];
+                if (!empty($data['password'])) {
+                    $updateData['password'] = Hash::make($data['password']);
+                }
+                $student->user->update($updateData);
+            } else {
+                // Create new user if not exists
+                $user = User::create([
+                    'name'     => $data['first_name'] . ' ' . $data['last_name'],
+                    'email'    => $data['email'],
+                    'password' => Hash::make($data['password'] ?? 'password123'),
+                    'role'     => 'student',
+                ]);
+                $data['user_id'] = $user->id;
+            }
+        }
+
         // កែប្រែទិន្នន័យ
         $student->update($data);
 
@@ -118,7 +155,7 @@ class StudentController extends Controller
             ->with('success', 'សិស្សត្រូវបានលុបដោយជោគជ័យ!');
     }
 
-    // Export PDF
+    // Export PDF (using mPDF for Khmer font support)
     public function exportPdf(Request $request)
     {
         $search = $request->input('search');
@@ -127,11 +164,43 @@ class StudentController extends Controller
                 ->orWhere('last_name', 'like', "%{$search}%"))
             ->latest()->get();
 
-        // បង្កើត PDF
-        $pdf = Pdf::loadView('students.pdf', compact('students'))
-            ->setPaper('a4', 'landscape');
+        // Render the blade view to HTML
+        $html = view('students.pdf', compact('students'))->render();
 
-        return $pdf->download('students-list.pdf');
+        // Create mPDF instance with Khmer font support
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4-L', // Landscape
+            'default_font_size' => 11,
+            'default_font' => 'notosanskh',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'tempDir' => storage_path('fonts/ttfontdata'),
+            'fontDir' => array_merge(
+                (new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'],
+                [storage_path('fonts')]
+            ),
+            'fontdata' => array_merge(
+                (new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'],
+                [
+                    'notosanskh' => [
+                        'R' => 'NotoSansKhmer-Regular.ttf',
+                        'B' => 'NotoSansKhmer-Bold.ttf',
+                    ],
+                ]
+            ),
+            'autoScriptToLang' => true,
+            'autoLangToFont' => true,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        return response($mpdf->Output('students-list.pdf', \Mpdf\Output\Destination::STRING_RETURN), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="students-list.pdf"',
+        ]);
     }
 
     // Export Excel
