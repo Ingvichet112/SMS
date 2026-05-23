@@ -147,6 +147,6 @@ class TeacherController extends Controller
         }
         $teacher->delete();
         return redirect()->route('teachers.index')
-            ->with('success', 'គ្រូត្រូវបានលុបដោយជោគជ័យ!');
+            ->with('success', 'ព័ត៌មានគ្រូត្រូវបានលុបដោយជោគជ័យ!');
     }
 }
