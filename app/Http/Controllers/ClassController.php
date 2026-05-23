@@ -63,7 +63,7 @@ class ClassController extends Controller
     {
         $class->update($request->validated());
         return redirect()->route('classes.index')
-            ->with('success', 'ថ្នាក់ត្រូវបានកែប្រែដោយជោគជ័យ!');
+            ->with('success', 'ថ្នាក់ត្រូវបានកែប្រែដោយជោគជ័យ!!!');
     }
 
     // លុបថ្នាក់
